@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+GREEN="\033[32m"
+RED="\033[31m"
+RESET="\033[0m"
+
+programs="
+batcat
+clang
+cmake
+curl
+ffmpeg
+fzf
+gcc
+git
+jq
+make
+python
+python3
+tmux
+wget
+"
+
+for program in $programs; do
+  if command -v "$program" >/dev/null 2>&1; then
+    if [ "$1" != "-" ]; then
+      printf "%b[+]%b %s %s\n" "$GREEN" "$RESET" "$program"
+    fi
+  else
+    if [ "$1" != "+" ]; then
+      printf "%b[-]%b %s\n" "$RED" "$RESET" "$program" >&2
+    fi
+  fi
+done

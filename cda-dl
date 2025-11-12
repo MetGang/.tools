@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+URL=$1
+RETRIES=${2:-5}
+
+# TODO: Make it prettier
+retry() {
+  local -r -i max_attempts="$1"; shift
+  local -i attempt_num=1
+
+  until "$@"; do
+    if (( attempt_num == max_attempts )); then
+      echo "Attempt $attempt_num failed. No more retries." >&2
+      return 1
+    else
+      echo "Attempt $attempt_num failed. Retrying..." >&2
+      sleep 2
+    fi
+    ((attempt_num++))
+  done
+}
+
+# Get full filename
+FILENAME=`retry $RETRIES yt-dlp --print filename "$URL"`
+
+# Download video
+retry $RETRIES yt-dlp -f dash-0 "$URL" -o vvv
+
+# Download audio
+retry $RETRIES yt-dlp -f dash-1 "$URL" -o aaa
+
+# Merge video & audio
+ffmpeg -i vvv -i aaa -c:v copy -c:a aac "$FILENAME"
+
+# Clear junk
+rm vvv
+rm aaa

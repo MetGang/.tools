@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+URL=$1
+
+# Download
+yt-dlp -f best "$URL"

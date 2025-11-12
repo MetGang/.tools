@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+URL=$1
+
+curl -s $URL | grep -a 'href="/video' | grep -oE "/video/[A-Za-z0-9]+" | sort -u | sed 's|^|https://www.cda.pl|'
